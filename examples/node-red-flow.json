@@ -1,0 +1,122 @@
+[
+  {
+    "id": "5c1f0e7a9b3d2a10",
+    "type": "tab",
+    "label": "Super Productivity",
+    "disabled": false,
+    "info": "Creates Super Productivity tasks through superprod-connect.\n\nSet the variables in this tab's properties (Environment Variables), then click the inject node.\n\nhttps://github.com/entoso-com/superprod-connect",
+    "env": [
+      {
+        "name": "SUPERPROD_CONNECT_URL",
+        "value": "http://superprod-connect:8080",
+        "type": "str"
+      },
+      {
+        "name": "SUPERSYNC_TOKEN",
+        "value": "",
+        "type": "str"
+      },
+      {
+        "name": "SUPERSYNC_E2EE_KEY",
+        "value": "",
+        "type": "str"
+      },
+      {
+        "name": "SUPERPROD_PROJECT",
+        "value": "",
+        "type": "str"
+      },
+      {
+        "name": "PLAN_FOR_TODAY",
+        "value": "true",
+        "type": "str"
+      }
+    ]
+  },
+  {
+    "id": "8a2d4c6e1f3b5a70",
+    "type": "inject",
+    "z": "5c1f0e7a9b3d2a10",
+    "name": "Example task",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "{\"title\":\"Example task from Node-RED\",\"notes\":\"**Created by Node-RED**\\n\\n- Source: sample flow\",\"url\":\"https://github.com/entoso-com/superprod-connect\",\"deadline\":\"\"}",
+    "payloadType": "json",
+    "x": 150,
+    "y": 100,
+    "wires": [
+      [
+        "3e7b9d1c5a2f4e80"
+      ]
+    ]
+  },
+  {
+    "id": "3e7b9d1c5a2f4e80",
+    "type": "function",
+    "z": "5c1f0e7a9b3d2a10",
+    "name": "Build request",
+    "func": "// Builds a superprod-connect request from msg.payload.\n// Accepted fields: title (required), project, notes, url, plannedDate, deadline.\n// Set the variables in the tab properties (double-click the \"Super Productivity\" tab).\nconst input = msg.payload || {};\n\n// Today in local time; used when no plannedDate is given and PLAN_FOR_TODAY is \"true\"\nconst now = new Date();\nconst today = [\n    now.getFullYear(),\n    String(now.getMonth() + 1).padStart(2, \"0\"),\n    String(now.getDate()).padStart(2, \"0\"),\n].join(\"-\");\n\nconst baseUrl = String(env.get(\"SUPERPROD_CONNECT_URL\") || \"\").replace(/\\/+$/, \"\");\nconst token = String(env.get(\"SUPERSYNC_TOKEN\") || \"\").replace(/\\s+/g, \"\");\nconst e2eeKey = env.get(\"SUPERSYNC_E2EE_KEY\");\n\nif (!baseUrl || !token) {\n    node.error(\"Set SUPERPROD_CONNECT_URL and SUPERSYNC_TOKEN in the tab properties\", msg);\n    return null;\n}\n\nmsg.method = \"POST\";\nmsg.url = baseUrl + \"/tasks\";\nmsg.headers = {\n    \"Authorization\": \"Bearer \" + token,\n    \"Content-Type\": \"application/json\"\n};\nif (e2eeKey) msg.headers[\"X-Encryption-Key\"] = e2eeKey;\n\nmsg.payload = {\n    title: input.title,\n    project: input.project || env.get(\"SUPERPROD_PROJECT\") || undefined,\n    notes: input.notes,\n    url: input.url,\n    plannedDate: input.plannedDate || (env.get(\"PLAN_FOR_TODAY\") === \"true\" ? today : undefined),\n    deadline: input.deadline\n};\n\nreturn msg;\n",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 350,
+    "y": 100,
+    "wires": [
+      [
+        "b4c6e8a0d2f41930"
+      ]
+    ]
+  },
+  {
+    "id": "b4c6e8a0d2f41930",
+    "type": "http request",
+    "z": "5c1f0e7a9b3d2a10",
+    "name": "superprod-connect",
+    "method": "use",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "insecureHTTPParser": false,
+    "authType": "",
+    "senderr": false,
+    "headers": [],
+    "x": 560,
+    "y": 100,
+    "wires": [
+      [
+        "f1a3c5e7092b4d60"
+      ]
+    ]
+  },
+  {
+    "id": "f1a3c5e7092b4d60",
+    "type": "debug",
+    "z": "5c1f0e7a9b3d2a10",
+    "name": "Result",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": true,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "statusCode",
+    "statusType": "msg",
+    "x": 750,
+    "y": 100,
+    "wires": []
+  }
+]
