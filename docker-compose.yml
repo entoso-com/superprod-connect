@@ -1,0 +1,11 @@
+services:
+  superprod-connect:
+    image: ghcr.io/entoso-com/superprod-connect:latest
+    container_name: superprod-connect
+    restart: unless-stopped
+    environment:
+      - SUPERSYNC_URL=https://sync.example.com
+      - PORT=8080
+      - CLIENT_ID=superprod-connect
+    ports:
+      - "8080:8080"
