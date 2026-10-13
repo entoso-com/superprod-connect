@@ -1,0 +1,23 @@
+{
+  "name": "superprod-connect",
+  "version": "1.0.0",
+  "description": "Minimal REST gateway to create Super Productivity tasks via SuperSync",
+  "scripts": {
+    "start": "node src/server.ts",
+    "dev": "node --env-file=.env src/server.ts",
+    "typecheck": "tsc"
+  },
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "hash-wasm": "^4.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "typescript": "^7.0.2"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=22.18"
+  }
+}
