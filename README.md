@@ -34,6 +34,17 @@ This is a small, independently developed utility, originally built to solve a pr
 
 It is not an official Super Productivity integration and currently focuses on task creation rather than providing a complete API for all Super Productivity functionality.
 
+### Related projects
+
+- **[Super Productivity](https://github.com/super-productivity/super-productivity)** is the open-source to-do list
+  and time tracker this gateway creates tasks for. It runs on desktop, mobile and the web. Its source code defines the
+  task model and the sync operations that superprod-connect reproduces.
+- **[SuperSync server](https://github.com/super-productivity/super-productivity/tree/master/packages/super-sync-server)**
+  is the self-hostable sync backend from the same repository. It stores every change your devices make as an
+  operation and relays those operations between devices. superprod-connect talks to this server, not to the app. It
+  uploads the same kind of "add task" operation a device would, so your apps pick up the new task on their next sync.
+  You need a running SuperSync server, your own or a hosted one, to use superprod-connect.
+
 ---
 
 ## Installation
